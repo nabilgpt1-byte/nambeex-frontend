@@ -1,10 +1,100 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 // Single-file React + Tailwind one-pager, front-end only.
-// Design faithfully mirrors the provided reference. Data-driven + componentized for maintainability.
-// — Sections: Topbar, Hero, Roots, Features, New Arrivals, Press, Contact, Footer
+// Design mirrors the provided reference. Data-driven + componentized for maintainability.
+// — Sections: Topbar, Hero, Roots, Features, New Arrivals (carousel), Press, Contact, Footer
 // — External buy links: Shopee (ID) & TikTok Shop only
 // — No backend, cart, or DB. Pure front-end.
+
+// ---------------------------------
+// Dev-time data validations ("tests")
+// ---------------------------------
+const __DEV__ =
+  typeof window !== "undefined" && process.env.NODE_ENV !== "production";
+function isAllowedMarketplace(url?: string) {
+  if (!url) return true; // undefined is allowed (we fallback to buyUrl)
+  try {
+    const u = new URL(url);
+    return (
+      /(^|\.)shopee\.co\.id$/.test(u.hostname) ||
+      /(^|\.)tiktok\.(com|co|shop)$/.test(u.hostname)
+    );
+  } catch {
+    return false;
+  }
+}
+function validateProducts(products: Array<any>) {
+  if (!__DEV__) return;
+  try {
+    console.groupCollapsed("[DEV] Product data checks");
+    products.forEach((p) => {
+      console.assert(
+        typeof p.id === "string" && p.id.length > 0,
+        `Invalid id for product`,
+        p
+      );
+      console.assert(
+        typeof p.name === "string" && p.name.length > 0,
+        `Invalid name for product`,
+        p
+      );
+      console.assert(
+        typeof p.price === "number" && p.price >= 0,
+        `Invalid price for product`,
+        p
+      );
+      console.assert(
+        !p.shopeeUrl || isAllowedMarketplace(p.shopeeUrl),
+        `Shopee URL must be shopee.co.id`,
+        p.shopeeUrl
+      );
+      console.assert(
+        !p.tiktokUrl || isAllowedMarketplace(p.tiktokUrl),
+        `TikTok URL domain appears invalid`,
+        p.tiktokUrl
+      );
+      console.assert(
+        typeof p.image === "string" && p.image.length > 0,
+        `Product image should be a non-empty string`,
+        p
+      );
+    });
+    // Functional checks for helper
+    console.assert(
+      buyUrl("sample", "shopee").startsWith("https://shopee.co.id/"),
+      "buyUrl(shopee) must target shopee.co.id"
+    );
+    console.assert(
+      buyUrl("sample", "tiktok").startsWith("https://www.tiktok.com/"),
+      "buyUrl(tiktok) must target tiktok.com"
+    );
+    // Extra test cases
+    console.assert(
+      isAllowedMarketplace("https://shopee.co.id/search?keyword=x"),
+      "Allowed host: shopee.co.id"
+    );
+    console.assert(
+      !isAllowedMarketplace("https://shopee.com/search?keyword=x"),
+      "Disallowed host: shopee.com"
+    );
+    console.assert(
+      isAllowedMarketplace("https://www.tiktok.com/search?q=x%20shop"),
+      "Allowed host: tiktok.com"
+    );
+    // Encodage & caractères spéciaux
+    const special = "jakarta tee + summer";
+    console.assert(
+      buyUrl(special, "shopee").includes(encodeURIComponent(special)),
+      "buyUrl encodes query for Shopee"
+    );
+    console.assert(
+      buyUrl(special, "tiktok").includes(encodeURIComponent(special)),
+      "buyUrl encodes query for TikTok"
+    );
+  } finally {
+    console.groupEnd?.();
+  }
+}
 
 // ------------------------------
 // Data models (easy to extend)
@@ -41,17 +131,29 @@ const PRESS = [
   },
 ];
 
-// Example product shape. Replace image with your own later; the on-card "tee" is a vector mockup.
+// Example product shape. Uses the Shopee image provided by you.
 const PRODUCTS = [
-  { id: "city-shirt", name: "City of Shirts", price: 20.0 },
+  {
+    id: "city-shirt",
+    name: "City of Shirts",
+    price: 20.0,
+    image:
+      "https://down-id.img.susercontent.com/file/id-11134207-7rbk3-mapulxh672n28f.webp",
+  },
   {
     id: "street-hoodie",
     name: "Street Smart Hoodie",
     price: 25.0,
-    cutHeight: "65%",
-    printTop: "22%",
+    image:
+      "https://down-id.img.susercontent.com/file/id-11134207-7rbk3-mapulxh672n28f.webp",
   },
-  { id: "urban-sweat", name: "Urban Sweat Shirt", price: 30.0 },
+  {
+    id: "urban-sweat",
+    name: "Urban Sweat Shirt",
+    price: 30.0,
+    image:
+      "https://down-id.img.susercontent.com/file/id-11134207-7rbk3-mapulxh672n28f.webp",
+  },
 ];
 
 // Build outbound links to the two allowed marketplaces only.
@@ -68,6 +170,9 @@ function buyUrl(productId: string, platform: "shopee" | "tiktok") {
   )}%20shop`;
 }
 
+// Run dev-time checks once (also invoked in App via useEffect for SPA HMR)
+validateProducts(PRODUCTS);
+
 // ------------------------------
 // Shared UI: container + helpers
 // ------------------------------
@@ -77,77 +182,39 @@ const Wrap: React.FC<React.PropsWithChildren> = ({ children }) => (
   </div>
 );
 
-// Vector T-shirt mockup (matches the reference look)
-const TeeMockup: React.FC<{
-  width?: number;
-  cloudOffset?: string; // left offset for cloud variation
-  cutHeight?: string; // override tee cut height
-  printTop?: string; // override print top
-}> = ({ width = 250, cloudOffset = "22%", cutHeight, printTop }) => {
-  const teeW = `${width}px`;
+// ------------------------------
+// Marquee (images only)
+// ------------------------------
+const ProductImageMarquee: React.FC<{ images: string[] }> = ({ images }) => {
+  const fallback =
+    "https://down-id.img.susercontent.com/file/id-11134207-7rbk3-mapulxh672n28f.webp";
+  const seq = images && images.length ? images : [fallback, fallback, fallback];
   return (
-    <div
-      className="relative rounded-xl border border-[#2a2a2a] shadow-[0_20px_40px_rgba(0,0,0,.35)]"
-      style={{
-        width: teeW,
-        aspectRatio: "1 / 1",
-        background: "linear-gradient(#0f0f0f,#151515)",
-      }}
-    >
-      <div
-        className="absolute left-1/2 -translate-x-1/2 rounded-xl"
-        style={{
-          top: "10%",
-          width: "82%",
-          height: cutHeight ?? "72%",
-          background: "linear-gradient(#ebebeb,#cfcfcf)",
-          opacity: 0.92,
-          clipPath:
-            "path('M 10 40 Q 125 -6 240 40 L 230 250 Q 125 300 20 250 Z')",
-        }}
-      />
-      <div
-        className="absolute left-1/2 -translate-x-1/2 rounded-lg border-4 border-white overflow-hidden"
-        style={{
-          top: printTop ?? "28%",
-          width: "56%",
-          aspectRatio: "4 / 5",
-          background: "linear-gradient(#d9f1ff,#cce8ff)",
-        }}
-      >
-        {/* Sky */}
-        <div
-          className="absolute inset-0"
-          style={{
-            background: "linear-gradient(#cfe9ff 0,#a6d6ff 40%,#7cc5ff 60%)",
-          }}
-        />
-        {/* Hill */}
-        <div
-          className="absolute left-[-10%] right-[-10%]"
-          style={{
-            bottom: "-5%",
-            height: "45%",
-            background:
-              "radial-gradient(120% 80% at 50% 0, #7ecb56 0 60%, #6bb545 61% 100%)",
-            transform: "skewY(-4deg)",
-          }}
-        />
-        {/* Cloud */}
-        <div
-          className="absolute rounded-[40px] bg-white"
-          style={{ top: "18%", left: cloudOffset, width: "40%", height: "22%" }}
-        >
-          <div
-            className="absolute rounded-full bg-white"
-            style={{ width: "45%", height: "160%", left: "18%", top: "-55%" }}
-          />
-          <div
-            className="absolute rounded-full bg-white"
-            style={{ width: "38%", height: "120%", left: "58%", top: "-30%" }}
-          />
+    <div className="relative mt-8">
+      <div className="overflow-hidden">
+        <div className="flex flex-nowrap gap-6 w-[max-content] animate-marquee">
+          {seq.map((src, i) => (
+            <img
+              key={`m1-${i}`}
+              src={src || fallback}
+              alt="Product"
+              loading="lazy"
+              className="h-[140px] w-[110px] sm:h-[160px] sm:w-[130px] lg:h-[180px] lg:w-[150px] object-cover rounded-xl border border-[#2a2a2a] bg-[#111]"
+            />
+          ))}
+          {seq.map((src, i) => (
+            <img
+              key={`m2-${i}`}
+              src={src || fallback}
+              alt="Product duplicate"
+              loading="lazy"
+              className="h-[140px] w-[110px] sm:h-[160px] sm:w-[130px] lg:h-[180px] lg:w-[150px] object-cover rounded-xl border border-[#2a2a2a] bg-[#111]"
+            />
+          ))}
         </div>
       </div>
+      <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-10 bg-gradient-to-r from-[rgba(11,11,11,1)] to-transparent" />
+      <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-10 bg-gradient-to-l from-[rgba(11,11,11,1)] to-transparent" />
     </div>
   );
 };
@@ -187,7 +254,12 @@ const Hero: React.FC = () => (
           className="relative lg:absolute lg:right-14 lg:top-10 w-[220px] h-[220px] rounded-2xl grid place-items-center border border-[#2a2a2a] bg-[#111] md:mx-auto lg:mx-0"
         >
           <div className="absolute inset-[22px] rounded-xl border border-dashed border-[#3a3a3a]" />
-          <TeeMockup width={250} />
+          <img
+            src="https://p16-sign-sg.tiktokcdn.com/tos-alisg-avt-0068/6b258925101e81fb6aee95a14e197486~tplv-tiktokx-cropcenter:1080:1080.jpeg?dr=14579&refresh_token=fb2f78fa&x-expires=1761303600&x-signature=Au%2BU6dHSE0kkeJUMoOgpkQ3tZsU%3D&t=4d5b0474&ps=13740610&shp=a5d48078&shcp=81f88b70&idc=my"
+            alt="Featured product"
+            className="w-[160px] h-[160px] object-cover rounded-xl border border-[#2a2a2a]"
+            loading="lazy"
+          />
           <a
             href="#new-arrivals"
             className="absolute right-[-8px] bottom-3 w-[74px] h-[74px] rounded-full border border-[#2d2d2d] bg-[#111] text-white grid place-items-center text-[11px] font-bold tracking-[1px]"
@@ -260,21 +332,43 @@ const FeaturePills: React.FC = () => (
 const NewArrivals: React.FC = () => (
   <section id="new-arrivals" className="scroll-mt-24">
     <Wrap>
-      <h3 className="font-anton text-[clamp(42px,7vw,80px)] my-2 mb-6">
+      <h3 className="font-anton text-[clamp(42px,7vw,80px)] my-2">
         NEW ARRIVALS
       </h3>
-      <div className="grid gap-7 lg:grid-cols-3 md:grid-cols-1">
+      {/* IMAGE MARQUEE (only product images) */}
+      <ProductImageMarquee
+        images={PRODUCTS.map(
+          (p) =>
+            p.image ||
+            "https://down-id.img.susercontent.com/file/id-11134207-7rbk3-mapulxh672n28f.webp"
+        )}
+      />
+    </Wrap>
+  </section>
+);
+
+const AllProducts: React.FC = () => (
+  <section id="all-products" className="scroll-mt-24">
+    <Wrap>
+      <h3 className="font-anton text-[clamp(42px,7vw,80px)] my-2">
+        ALL PRODUCTS
+      </h3>
+      {/* GRID (unique) */}
+      <div className="mt-10 grid gap-7 lg:grid-cols-3 md:grid-cols-1">
         {PRODUCTS.map((p, idx) => (
           <article
-            key={p.id}
+            key={`grid-${p.id}-${idx}`}
             className="grid gap-3 rounded-2xl border border-[#2a2a2a] bg-[#0f0f0f] p-[22px]"
           >
-            <div className="mx-auto" style={{ width: 220 }}>
-              <TeeMockup
-                width={220}
-                cloudOffset={idx === 0 ? "28%" : idx === 1 ? "30%" : "32%"}
-                cutHeight={p.cutHeight}
-                printTop={p.printTop}
+            <div className="w-full">
+              <img
+                src={
+                  p.image ||
+                  "https://down-id.img.susercontent.com/file/id-11134207-7rbk3-mapulxh672n28f.webp"
+                }
+                alt={p.name}
+                className="w-full aspect-[4/5] object-cover rounded-xl border border-[#2a2a2a]"
+                loading="lazy"
               />
             </div>
             <div className="flex items-center justify-between text-[#cfcfcf] text-[12px]">
@@ -284,7 +378,7 @@ const NewArrivals: React.FC = () => (
             <div className="flex gap-2 pt-1">
               <a
                 className="inline-flex items-center justify-center rounded-lg border border-white/20 px-3 py-2 text-[12px] font-semibold hover:border-white/40"
-                href={buyUrl(p.id, "shopee")}
+                href={p.shopeeUrl || buyUrl(p.id, "shopee")}
                 target="_blank"
                 rel="noreferrer noopener"
                 aria-label={`Buy ${p.name} on Shopee Indonesia`}
@@ -293,7 +387,7 @@ const NewArrivals: React.FC = () => (
               </a>
               <a
                 className="inline-flex items-center justify-center rounded-lg border border-white/20 px-3 py-2 text-[12px] font-semibold hover:border-white/40"
-                href={buyUrl(p.id, "tiktok")}
+                href={p.tiktokUrl || buyUrl(p.id, "tiktok")}
                 target="_blank"
                 rel="noreferrer noopener"
                 aria-label={`Buy ${p.name} on TikTok Shop`}
@@ -304,9 +398,6 @@ const NewArrivals: React.FC = () => (
           </article>
         ))}
       </div>
-      <p className="text-muted text-[12px] mt-2">
-        Tip: Drag and drop your image over the mockup.
-      </p>
     </Wrap>
   </section>
 );
@@ -389,6 +480,10 @@ const Footer: React.FC = () => (
 // App
 // ------------------------------
 export default function App() {
+  useEffect(() => {
+    validateProducts(PRODUCTS);
+  }, []);
+
   return (
     <div
       className="min-h-screen text-[var(--fg)]"
@@ -403,6 +498,15 @@ export default function App() {
         body { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
         .font-anton{ font-family: 'Anton', Impact, sans-serif; }
         .font-inter{ font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; }
+
+        /* Hide horizontal scrollbar */
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+
+        /* Marquee animation */
+        @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+        .animate-marquee { animation: marquee 30s linear infinite; will-change: transform; }
+        @media (prefers-reduced-motion: reduce) { .animate-marquee { animation-duration: 0.001ms; animation-iteration-count: 1; } }
       `}</style>
 
       <div className="font-inter">
@@ -411,6 +515,7 @@ export default function App() {
         <Roots />
         <FeaturePills />
         <NewArrivals />
+        <AllProducts />
         <Press />
         <Contact />
         <Footer />
