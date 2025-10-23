@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 
 // Single-file React + Tailwind one-pager, front-end only.
 // Design mirrors the provided reference. Data-driven + componentized for maintainability.
-// — Sections: Topbar, Hero, Roots, Features, New Arrivals (carousel), Press, Contact, Footer
+// — Sections: Topbar, Hero, Roots, Features, New Arrivals (marquee only), All Products (grid), Press, Contact, Footer
 // — External buy links: Shopee (ID) & TikTok Shop only
 // — No backend, cart, or DB. Pure front-end.
 
@@ -27,6 +27,12 @@ function validateProducts(products: Array<any>) {
   if (!__DEV__) return;
   try {
     console.groupCollapsed("[DEV] Product data checks");
+    // Basic presence
+    console.assert(
+      Array.isArray(products) && products.length >= 1,
+      "At least one product expected"
+    );
+
     products.forEach((p) => {
       console.assert(
         typeof p.id === "string" && p.id.length > 0,
@@ -59,6 +65,7 @@ function validateProducts(products: Array<any>) {
         p
       );
     });
+
     // Functional checks for helper
     console.assert(
       buyUrl("sample", "shopee").startsWith("https://shopee.co.id/"),
@@ -91,6 +98,9 @@ function validateProducts(products: Array<any>) {
       buyUrl(special, "tiktok").includes(encodeURIComponent(special)),
       "buyUrl encodes query for TikTok"
     );
+    // New lightweight checks
+    console.assert(FEATURES.length >= 3, "Expect at least 3 feature pills");
+    console.assert(PRESS.length >= 3, "Expect at least 3 press quotes");
   } finally {
     console.groupEnd?.();
   }
@@ -104,13 +114,21 @@ const THEME = {
   fg: "#f4f4f4",
   muted: "#bfbfbf",
   accent: "#ffffff",
-  grid: "1240px",
+  grid: "1200px",
+};
+
+// Layout tokens for consistent spacing (if needed later)
+const LAYOUT = {
+  containerX: "px-6 md:px-8",
+  sectionY: "py-16 md:py-20",
+  cardPad: "p-6 md:p-7",
+  cardBorder: "border-[#262626]",
 };
 
 const FEATURES = [
   { icon: "✴︎", title: "Designed", text: "By Locals" },
   { icon: "✚", title: "Inclusive", text: "Sizes" },
-  { icon: "⌁", title: "Eco‑Friendly", text: "Packaging" },
+  { icon: "⚡", title: "Eco‑Friendly", text: "Packaging" },
 ];
 
 const PRESS = [
@@ -177,7 +195,7 @@ validateProducts(PRODUCTS);
 // Shared UI: container + helpers
 // ------------------------------
 const Wrap: React.FC<React.PropsWithChildren> = ({ children }) => (
-  <div className="mx-auto px-7" style={{ maxWidth: THEME.grid }}>
+  <div className="mx-auto px-6 md:px-8" style={{ maxWidth: THEME.grid }}>
     {children}
   </div>
 );
@@ -223,51 +241,60 @@ const ProductImageMarquee: React.FC<{ images: string[] }> = ({ images }) => {
 // Sections
 // ------------------------------
 const Topbar: React.FC = () => (
-  <header className="py-4">
+  <header className="py-5">
     <Wrap>
       <div className="flex items-center gap-3 font-bold tracking-[0.3px]">
         <span className="text-[19px] mr-1">✦</span>
-        <strong>street style &amp; co</strong>
+        <strong>Nambeex</strong>
       </div>
     </Wrap>
   </header>
 );
 
+// HERO with swapped positions (image + CTA first, then text) on all breakpoints
 const Hero: React.FC = () => (
-  <section className="relative py-6 pb-20 overflow-clip">
+  <section className="relative overflow-hidden pt-12 md:pt-16 pb-24">
     <Wrap>
-      <div className="grid gap-7 items-start md:grid-cols-1 lg:grid-cols-[1.1fr_0.9fr]">
+      <div className="grid gap-8 items-center md:grid-cols-1 lg:grid-cols-[1.2fr_0.8fr]">
+        {/* First: tee image + fixed overlays */}
+        <div className="relative grid place-items-center">
+          <div className="relative inline-block w-[280px] md:w-[360px] lg:w-[420px] aspect-square">
+            <img
+              src="https://p16-sign-sg.tiktokcdn.com/tos-alisg-avt-0068/6b258925101e81fb6aee95a14e197486~tplv-tiktokx-cropcenter:1080:1080.jpeg?dr=14579&refresh_token=fb2f78fa&x-expires=1761303600&x-signature=Au%2BU6dHSE0kkeJUMoOgpkQ3tZsU%3D&t=4d5b0474&ps=13740610&shp=a5d48078&shcp=81f88b70&idc=my"
+              alt="Featured product"
+              className="absolute inset-0 w-full h-full object-cover rounded-xl border border-[#2a2a2a] rotate-[-12deg] shadow-[0_40px_140px_rgba(0,0,0,.5)]"
+              loading="lazy"
+            />
+
+            {/* CTA circular button anchored to the image wrapper (fixed relative offsets) */}
+            <a
+              href="#new-arrivals"
+              className="absolute bottom-[-20px] right-[-10px] md:bottom-[-26px] md:right-[-14px] lg:bottom-[-32px] lg:right-[-18px] w-[98px] h-[98px] md:w-[110px] md:h-[110px] rounded-full grid place-items-center text-[11px] font-semibold tracking-[1px] text-white btn-invert transition-colors"
+              aria-label="Explore new arrivals"
+            >
+              <span className="btn-ring absolute inset-0 rounded-full border border-white/50" />
+              <span className="btn-ring absolute inset-[8px] rounded-full border border-white/25" />
+              <span className="z-10 text-center leading-tight">
+                EXPLORE
+                <br />
+                HERE
+              </span>
+            </a>
+          </div>
+        </div>
+
+        {/* Second: Headline + copy */}
         <div>
-          <h1 className="font-anton leading-[0.9] tracking-[1px] my-2 text-[clamp(48px,11vw,148px)]">
+          <h1 className="font-anton leading-[0.82] tracking-[0.5px] text-white text-[clamp(56px,12vw,160px)]">
             FIND
             <br />
             YOUR
             <br />
             VIBE
           </h1>
-          <small className="block text-[14px] text-muted max-w-[320px] mt-[22px]">
-            Check out our Captivating Cities shirt collection
-          </small>
-        </div>
-        <div
-          aria-hidden
-          className="relative lg:absolute lg:right-14 lg:top-10 w-[220px] h-[220px] rounded-2xl grid place-items-center border border-[#2a2a2a] bg-[#111] md:mx-auto lg:mx-0"
-        >
-          <div className="absolute inset-[22px] rounded-xl border border-dashed border-[#3a3a3a]" />
-          <img
-            src="https://p16-sign-sg.tiktokcdn.com/tos-alisg-avt-0068/6b258925101e81fb6aee95a14e197486~tplv-tiktokx-cropcenter:1080:1080.jpeg?dr=14579&refresh_token=fb2f78fa&x-expires=1761303600&x-signature=Au%2BU6dHSE0kkeJUMoOgpkQ3tZsU%3D&t=4d5b0474&ps=13740610&shp=a5d48078&shcp=81f88b70&idc=my"
-            alt="Featured product"
-            className="w-[160px] h-[160px] object-cover rounded-xl border border-[#2a2a2a]"
-            loading="lazy"
-          />
-          <a
-            href="#new-arrivals"
-            className="absolute right-[-8px] bottom-3 w-[74px] h-[74px] rounded-full border border-[#2d2d2d] bg-[#111] text-white grid place-items-center text-[11px] font-bold tracking-[1px]"
-          >
-            EXPLORE
-            <br />
-            HERE
-          </a>
+          <p className="mt-6 text-[15px] text-[#d7d7d7] max-w-[420px]">
+            Check out our Captivating shirt collection
+          </p>
         </div>
       </div>
     </Wrap>
@@ -275,7 +302,7 @@ const Hero: React.FC = () => (
 );
 
 const Roots: React.FC = () => (
-  <section className="relative mt-10">
+  <section className="relative mt-14 md:mt-16">
     <div
       className="h-[520px] grayscale bg-cover bg-center"
       style={{
@@ -312,7 +339,7 @@ const Roots: React.FC = () => (
 );
 
 const FeaturePills: React.FC = () => (
-  <section className="py-14">
+  <section className="py-16">
     <Wrap>
       <div className="grid gap-6 text-center lg:grid-cols-3 md:grid-cols-1">
         {FEATURES.map((f) => (
@@ -330,9 +357,9 @@ const FeaturePills: React.FC = () => (
 );
 
 const NewArrivals: React.FC = () => (
-  <section id="new-arrivals" className="scroll-mt-24">
+  <section id="new-arrivals" className="scroll-mt-24 pb-10 md:pb-16">
     <Wrap>
-      <h3 className="font-anton text-[clamp(42px,7vw,80px)] my-2">
+      <h3 className="font-anton text-[clamp(42px,7vw,80px)] mb-4">
         NEW ARRIVALS
       </h3>
       {/* IMAGE MARQUEE (only product images) */}
@@ -348,9 +375,9 @@ const NewArrivals: React.FC = () => (
 );
 
 const AllProducts: React.FC = () => (
-  <section id="all-products" className="scroll-mt-24">
+  <section id="all-products" className="scroll-mt-24 pt-12 md:pt-20">
     <Wrap>
-      <h3 className="font-anton text-[clamp(42px,7vw,80px)] my-2">
+      <h3 className="font-anton text-[clamp(42px,7vw,80px)] mb-4">
         ALL PRODUCTS
       </h3>
       {/* GRID (unique) */}
@@ -358,7 +385,7 @@ const AllProducts: React.FC = () => (
         {PRODUCTS.map((p, idx) => (
           <article
             key={`grid-${p.id}-${idx}`}
-            className="grid gap-3 rounded-2xl border border-[#2a2a2a] bg-[#0f0f0f] p-[22px]"
+            className="grid gap-3 rounded-2xl border border-[#262626] bg-[#0f0f0f] p-6 md:p-7"
           >
             <div className="w-full">
               <img
@@ -367,7 +394,7 @@ const AllProducts: React.FC = () => (
                   "https://down-id.img.susercontent.com/file/id-11134207-7rbk3-mapulxh672n28f.webp"
                 }
                 alt={p.name}
-                className="w-full aspect-[4/5] object-cover rounded-xl border border-[#2a2a2a]"
+                className="w-full aspect-[4/5] object-cover rounded-xl border border-[#262626]"
                 loading="lazy"
               />
             </div>
@@ -377,7 +404,7 @@ const AllProducts: React.FC = () => (
             </div>
             <div className="flex gap-2 pt-1">
               <a
-                className="inline-flex items-center justify-center rounded-lg border border-white/20 px-3 py-2 text-[12px] font-semibold hover:border-white/40"
+                className="inline-flex items-center justify-center rounded-lg border border-white/20 px-3 py-2 text-[12px] font-semibold hover:border-white/40 btn-invert transition-colors"
                 href={p.shopeeUrl || buyUrl(p.id, "shopee")}
                 target="_blank"
                 rel="noreferrer noopener"
@@ -386,7 +413,7 @@ const AllProducts: React.FC = () => (
                 Buy on Shopee
               </a>
               <a
-                className="inline-flex items-center justify-center rounded-lg border border-white/20 px-3 py-2 text-[12px] font-semibold hover:border-white/40"
+                className="inline-flex items-center justify-center rounded-lg border border-white/20 px-3 py-2 text-[12px] font-semibold hover:border-white/40 btn-invert transition-colors"
                 href={p.tiktokUrl || buyUrl(p.id, "tiktok")}
                 target="_blank"
                 rel="noreferrer noopener"
@@ -403,28 +430,31 @@ const AllProducts: React.FC = () => (
 );
 
 const Press: React.FC = () => (
-  <section className="mt-[70px] border-t border-[#222] pt-[34px] pb-2">
+  <section className="mt-20 md:mt-24 border-t border-[#222] pt-8 pb-4">
     <Wrap>
-      <h3 className="font-anton text-[clamp(42px,7vw,80px)] mb-2">PRESS</h3>
-      <div className="grid gap-7 lg:grid-cols-2 md:grid-cols-1">
-        <div>
-          <div className="uppercase text-[12px] tracking-[1.6px] text-[#adadad]">
-            {PRESS[0].quote}
-          </div>
-          <div className="mt-3 border-t border-[#222] pt-3 text-[13px] text-[#c9c9c9]">
-            {PRESS[0].outlet}
-          </div>
+      <div className="grid md:grid-cols-2 gap-8 lg:gap-12 items-center">
+        {/* Left: Big PRESS heading matching the reference */}
+        <div className="order-1 md:order-none">
+          <h3 className="font-anton text-[clamp(64px,14vw,180px)] leading-[0.85]">
+            PRESS
+          </h3>
         </div>
-        <div>
-          <div className="uppercase text-[12px] tracking-[1.6px] text-[#adadad]">
-            {PRESS[1].quote}
-          </div>
-          <div className="mt-3 border-t border-[#222] pt-3 text-[13px] text-[#c9c9c9]">
-            {PRESS[1].outlet}
-          </div>
-          <div className="mt-3 border-t border-[#222] pt-3 text-[13px] text-[#c9c9c9]">
-            {PRESS[2].outlet}
-          </div>
+
+        {/* Right: Stacked quotes with separators */}
+        <div className="space-y-12">
+          {PRESS.map((item, idx) => (
+            <div key={item.outlet}>
+              <div className="text-[clamp(16px,2.2vw,24px)] leading-snug text-[#e9e9e9]">
+                {item.quote}
+              </div>
+              <div className="mt-6 text-[clamp(20px,3vw,32px)] tracking-[1.2px] uppercase text-white">
+                {item.outlet}
+              </div>
+              {idx < PRESS.length - 1 && (
+                <div className="mt-8 h-px bg-white/40" />
+              )}
+            </div>
+          ))}
         </div>
       </div>
     </Wrap>
@@ -432,46 +462,105 @@ const Press: React.FC = () => (
 );
 
 const Contact: React.FC = () => (
-  <section className="my-[70px]">
+  <section className="relative mt-20 md:mt-24">
     <Wrap>
-      <div className="font-anton text-[clamp(42px,7.6vw,90px)] leading-[.95] mb-4">
-        REACH OUT FOR
-        <br />
-        INQUIRIES
-      </div>
-      <div className="mt-6 grid gap-7 lg:grid-cols-4 md:grid-cols-2">
-        <div className="border-t border-[#222] pt-3 text-[#dcdcdc]">
-          <div className="uppercase tracking-[1px] text-muted">Phone</div>
-          <div>(123) 456-7890</div>
+      <div className="grid gap-10 lg:gap-14 lg:grid-cols-[1.1fr_0.9fr] items-start">
+        {/* Left: big heading + copy */}
+        <div>
+          <div className="font-anton text-[clamp(42px,7.6vw,96px)] leading-[.9]">
+            REACH OUT FOR
+            <br />
+            INQUIRIES <span className="text-[#bdbdbd]">&amp; PARTNERSHIPS</span>
+          </div>
+          <p className="text-[#d6d6d6] text-[14px] max-w-[560px] mt-4">
+            Questions sur les produits, demandes B2B, collabs ou presse —
+            utilise le canal qui te convient. Nous répondons rapidement en
+            semaine.
+          </p>
         </div>
-        <div className="border-t border-[#222] pt-3 text-[#dcdcdc]">
-          <div className="uppercase tracking-[1px] text-muted">Email</div>
-          <div>hello@reallygreatsite.com</div>
-        </div>
-        <div className="border-t border-[#222] pt-3 text-[#dcdcdc]">
-          <div className="uppercase tracking-[1px] text-muted">Email</div>
-          <div>hello@reallygreatsite.com</div>
-        </div>
-        <div className="border-t border-[#222] pt-3 text-[#dcdcdc]">
-          <div className="uppercase tracking-[1px] text-muted">Social</div>
-          <div className="space-x-2">
-            <a href="#">f</a>
-            <a href="#">◎</a>
+
+        {/* Right: cards (resilient to long content) */}
+        <div className="grid sm:grid-cols-2 gap-5">
+          <div className="rounded-2xl border border-[#262626] bg-[#0f0f0f] p-6 md:p-7 break-words">
+            <div className="uppercase tracking-[1px] text-muted text-[12px]">
+              Phone
+            </div>
+            <a
+              href="tel:+11234567890"
+              className="block mt-2 text-[18px] break-words max-w-full"
+            >
+              (123) 456-7890
+            </a>
+            <div className="mt-4 h-px bg-white/10" />
+            <div className="mt-3 text-[12px] text-[#bdbdbd]">
+              Lun–Ven · 9h–18h
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-[#262626] bg-[#0f0f0f] p-6 md:p-7 break-words">
+            <div className="uppercase tracking-[1px] text-muted text-[12px]">
+              Email
+            </div>
+            <a
+              href="mailto:hello@reallygreatsite.com"
+              className="block mt-2 text-[18px] break-words max-w-full"
+            >
+              hello@reallygreatsite.com
+            </a>
+            <div className="mt-4 h-px bg-white/10" />
+            <div className="mt-3 text-[12px] text-[#bdbdbd]">
+              Support &amp; partenariats
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-[#262626] bg-[#0f0f0f] p-6 md:p-7 break-words">
+            <div className="uppercase tracking-[1px] text-muted text-[12px]">
+              Press
+            </div>
+            <div className="mt-2 text-[18px] break-words max-w-full">
+              press@reallygreatsite.com
+            </div>
+            <div className="mt-4 h-px bg-white/10" />
+            <div className="mt-3 text-[12px] text-[#bdbdbd]">
+              Dossiers &amp; visuels sur demande
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-[#262626] bg-[#0f0f0f] p-6 md:p-7 break-words">
+            <div className="uppercase tracking-[1px] text-muted text-[12px]">
+              Social
+            </div>
+            <div className="mt-2 flex items-center gap-3 text-[18px] flex-wrap">
+              <a
+                href="#"
+                className="underline-offset-4 hover:underline break-words max-w-full"
+              >
+                Instagram
+              </a>
+              <span className="text-muted">·</span>
+              <a
+                href="https://www.tiktok.com/@nambeexofc"
+                className="underline-offset-4 hover:underline break-words max-w-full"
+              >
+                TikTok
+              </a>
+            </div>
+            <div className="mt-4 h-px bg-white/10" />
+            <div className="mt-3 text-[12px] text-[#bdbdbd]">DM ouverts</div>
           </div>
         </div>
       </div>
-
-      <div className="font-anton text-[clamp(42px,7.6vw,90px)] leading-[.95] mt-[50px]">
-        AND PARTNERSHIPS
-      </div>
     </Wrap>
+
+    {/* subtle divider to close the section visually */}
+    <div className="pointer-events-none absolute left-0 right-0 -bottom-5 h-px bg-gradient-to-r from-transparent via-white/15 to-transparent" />
   </section>
 );
 
 const Footer: React.FC = () => (
-  <footer className="border-t border-[#222] mt-[30px] py-8 pb-20 text-[#cfcfcf]">
+  <footer className="border-t border-[#222] mt-[30px] py-10 text-[#cfcfcf]">
     <Wrap>
-      <div>© Street Style &amp; Co</div>
+      <div>© Nambeex</div>
     </Wrap>
   </footer>
 );
@@ -507,6 +596,16 @@ export default function App() {
         @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
         .animate-marquee { animation: marquee 30s linear infinite; will-change: transform; }
         @media (prefers-reduced-motion: reduce) { .animate-marquee { animation-duration: 0.001ms; animation-iteration-count: 1; } }
+
+        /* Headings rhythm */
+        h1,h2,h3{ letter-spacing: 0.4px; }
+        .section-gap{ margin-top: 1rem; margin-bottom: 1rem; }
+
+        /* Button invert behavior (global) */
+        .btn-invert{ background: transparent; color:#fff; border-color: rgba(255,255,255,.32); transition: background-color .2s ease, color .2s ease, border-color .2s ease; }
+        .btn-invert:hover{ background:#fff; color:#000; border-color:#000 !important; }
+        .btn-invert:focus-visible{ outline:2px solid #fff; outline-offset:2px; }
+        .btn-invert:hover .btn-ring{ border-color:#000 !important; }
       `}</style>
 
       <div className="font-inter">
