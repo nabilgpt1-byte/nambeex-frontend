@@ -260,8 +260,8 @@ const Hero: React.FC = () => (
         <div className="relative grid place-items-center">
           <div className="relative inline-block w-[280px] md:w-[360px] lg:w-[420px] aspect-square">
             <img
-              src="https://p16-sign-sg.tiktokcdn.com/tos-alisg-avt-0068/6b258925101e81fb6aee95a14e197486~tplv-tiktokx-cropcenter:1080:1080.jpeg?dr=14579&refresh_token=fb2f78fa&x-expires=1761303600&x-signature=Au%2BU6dHSE0kkeJUMoOgpkQ3tZsU%3D&t=4d5b0474&ps=13740610&shp=a5d48078&shcp=81f88b70&idc=my"
-              alt="Featured product"
+              src="/assets/nambeex-logo.jpeg"
+              alt="Brand logo"
               className="absolute inset-0 w-full h-full object-cover rounded-xl border border-[#2a2a2a] rotate-[-12deg] shadow-[0_40px_140px_rgba(0,0,0,.5)]"
               loading="lazy"
             />
