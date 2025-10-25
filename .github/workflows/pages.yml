@@ -19,14 +19,27 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      # Node + cache pnpm
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
-      - run: npm ci
-      - run: npm run build
-      # (optionnel) si tu utilises un domaine perso et que tu veux le forcer côté artefact :
-      - run: echo "nambeex.com" > dist/CNAME
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+
+      # Activer pnpm via Corepack (intégré à Node 20)
+      - run: corepack enable
+
+      # Install & build avec pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+
+      # (Optionnel mais conseillé si tu utilises React Router)
+      # - run: cp dist/index.html dist/404.html
+
+      # (Optionnel) Si tu veux forcer le domaine via artefact:
+      # - run: echo "nambeex.com" > dist/CNAME
+
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
