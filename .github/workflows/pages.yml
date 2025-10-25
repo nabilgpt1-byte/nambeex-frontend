@@ -20,26 +20,27 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Node + cache pnpm
+      # 1) Node
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: pnpm
-          cache-dependency-path: pnpm-lock.yaml
+          # ⚠️ Pas de "cache: pnpm" ici, c'est lui qui déclenche ton erreur
 
-      # Activer pnpm via Corepack (intégré à Node 20)
+      # 2) Activer PNPM avec Corepack (inclus dans Node 20)
       - run: corepack enable
+      # (facultatif mais recommandé pour épingler une version PNPM)
+      - run: corepack prepare pnpm@9 --activate
 
-      # Install & build avec pnpm
+      # 3) Install & build
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
-
-      # (Optionnel mais conseillé si tu utilises React Router)
+      # (si React Router)
       # - run: cp dist/index.html dist/404.html
 
-      # (Optionnel) Si tu veux forcer le domaine via artefact:
+      # (option) forcer le domaine custom via artefact
       # - run: echo "nambeex.com" > dist/CNAME
 
+      # 4) Publier l’artefact Pages
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
