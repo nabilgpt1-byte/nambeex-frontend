@@ -59,6 +59,48 @@ const PRESS = [
   },
 ];
 
+const TEMPLATE_LOOKBOOK_IMAGES = [
+  {
+    src: "/assets/weblium/template-lookbook-01.webp",
+    alt: "Woman wearing colourful streetwear in front of a graffiti wall",
+  },
+  {
+    src: "/assets/weblium/template-lookbook-02.webp",
+    alt: "Woman posing in a turquoise jacket and purple trousers",
+  },
+  {
+    src: "/assets/weblium/template-lookbook-03.webp",
+    alt: "Streetwear portrait against a purple background",
+  },
+  {
+    src: "/assets/weblium/template-lookbook-04.webp",
+    alt: "Man wearing a turquoise and purple windbreaker",
+  },
+  {
+    src: "/assets/weblium/template-lookbook-05.webp",
+    alt: "Woman wearing a yellow sportswear outfit",
+  },
+  {
+    src: "/assets/weblium/template-lookbook-06.webp",
+    alt: "Woman wearing a colourful top in front of a painted wall",
+  },
+];
+
+const TEMPLATE_WOMENS_IMAGES = [
+  {
+    src: "/assets/weblium/template-women-01.webp",
+    alt: "Woman in a blue and orange studio portrait",
+  },
+  {
+    src: "/assets/weblium/template-women-02.webp",
+    alt: "Three athletes posing in a blue and orange studio",
+  },
+  {
+    src: "/assets/weblium/template-women-03.webp",
+    alt: "Woman wearing red and white sportswear",
+  },
+];
+
 function buyUrl(productId: string, platform: "shopee" | "tiktok") {
   const query = encodeURIComponent(productId);
 
@@ -159,8 +201,8 @@ function Header() {
           className={`main-nav${menuOpen ? " main-nav--open" : ""}`}
           aria-label="Main navigation"
         >
-          <a href="#story" onClick={closeMenu}>
-            Story
+          <a href="#about" onClick={closeMenu}>
+            About us
           </a>
           <a href="#new-arrivals" onClick={closeMenu}>
             New drop
@@ -189,9 +231,6 @@ function Hero() {
     <section id="top" className="hero">
       <div className="hero__media" aria-hidden="true">
         <img src="/assets/nambeex-hero.webp" alt="" />
-        <span className="glitch-slice glitch-slice--one" />
-        <span className="glitch-slice glitch-slice--two" />
-        <span className="glitch-slice glitch-slice--three" />
       </div>
 
       <Shell className="hero__content">
@@ -211,7 +250,7 @@ function Hero() {
             <a className="button button--cyan" href="#new-arrivals">
               Explore the drop <ArrowIcon />
             </a>
-            <a className="text-link" href="#story">
+            <a className="text-link" href="#about">
               Our identity <ArrowIcon />
             </a>
           </div>
@@ -230,6 +269,97 @@ function Hero() {
           <span>Live in style</span><i>✦</i><span>Find your vibe</span><i>✦</i>
         </div>
       </div>
+    </section>
+  );
+}
+
+function TemplateAbout() {
+  return (
+    <section id="about" className="template-about">
+      <Shell className="template-about__inner">
+        <div className="template-about__copy">
+          <h2 className="template-title template-title--about">About us</h2>
+          <p className="template-about__lead">Join the Nambeex brand. Live in style.</p>
+          <p className="template-about__text">
+            A big city can make everyone look the same. Nambeex creates sportswear and
+            streetwear that puts individuality first. Feel bright and free—never hide
+            your own style.
+          </p>
+          <div className="template-about__actions">
+            <a className="button button--cyan" href="#story">
+              Learn more <ArrowIcon />
+            </a>
+            <a className="button template-button--outline" href="#all-products">
+              Shop Nambeex <ArrowIcon />
+            </a>
+          </div>
+        </div>
+      </Shell>
+    </section>
+  );
+}
+
+function TemplateLookbook() {
+  return (
+    <section id="collection-lookbook" className="template-lookbook">
+      <Shell>
+        <header className="template-heading template-heading--center">
+          <h2 className="template-title">
+            have a short look at the <span>NEW COLLECTION</span>
+          </h2>
+        </header>
+
+        <div className="template-lookbook__grid">
+          {TEMPLATE_LOOKBOOK_IMAGES.map((image) => (
+            <figure className="template-lookbook__item" key={image.src}>
+              <img src={image.src} alt={image.alt} loading="lazy" decoding="async" />
+            </figure>
+          ))}
+        </div>
+      </Shell>
+    </section>
+  );
+}
+
+function TemplateInvitation() {
+  return (
+    <section id="collection-invite" className="template-invitation">
+      <Shell className="template-invitation__inner">
+        <div className="template-invitation__copy">
+          <h2 className="template-title">be the first to shop the new collection</h2>
+          <p>
+            Send us a message and be the first to hear about the next Nambeex
+            collection.
+          </p>
+          <a className="button button--dark" href="#contact">
+            Send a message <ArrowIcon />
+          </a>
+        </div>
+      </Shell>
+    </section>
+  );
+}
+
+function TemplateWomensArrivals() {
+  return (
+    <section id="women-arrivals" className="template-womens">
+      <Shell>
+        <header className="template-heading template-heading--center">
+          <h2 className="template-title">NEW WOMENS ARRIVALS</h2>
+          <p>A first look at the colour and energy inspiring the next Nambeex drop.</p>
+        </header>
+
+        <div className="template-womens__grid">
+          {TEMPLATE_WOMENS_IMAGES.map((image, index) => (
+            <figure
+              className={`template-womens__item template-womens__item--${index + 1}`}
+              key={image.src}
+            >
+              <img src={image.src} alt={image.alt} loading="lazy" decoding="async" />
+            </figure>
+          ))}
+        </div>
+      </Shell>
     </section>
   );
 }
@@ -505,6 +635,10 @@ export default function App() {
       <Header />
       <main>
         <Hero />
+        <TemplateAbout />
+        <TemplateLookbook />
+        <TemplateInvitation />
+        <TemplateWomensArrivals />
         <Story />
         <Features />
         <NewArrivals />
