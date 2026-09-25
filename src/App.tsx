@@ -4,7 +4,7 @@ type Product = {
   id: string;
   name: string;
   category: string;
-  price: number;
+  price: BigInteger;
   image: string;
   shopeeUrl?: string;
   tiktokUrl?: string;
@@ -19,25 +19,32 @@ type Feature = {
 
 const PRODUCTS: Product[] = [
   {
-    id: "city-shirt",
-    name: "City of Shirts",
-    category: "Graphic tee",
-    price: 20,
-    image: "/assets/nambeex-product.webp",
+    id: "black",
+    name: "Black",
+    category: "T-shirt",
+    price: 100,
+    image: "/assets/nambeex-product-black.webp",
   },
   {
-    id: "street-hoodie",
-    name: "Street Smart Hoodie",
-    category: "Street layer",
-    price: 25,
-    image: "/assets/nambeex-product.webp",
+    id: "white",
+    name: "White",
+    category: "T-shirt",
+    price: 100,
+    image: "/assets/nambeex-product-white.webp",
   },
   {
-    id: "urban-sweat",
-    name: "Urban Sweat Shirt",
-    category: "Everyday essential",
-    price: 30,
-    image: "/assets/nambeex-product.webp",
+    id: "maroon",
+    name: "Maroon",
+    category: "T-shirt",
+    price: 100,
+    image: "/assets/nambeex-product-red.webp",
+  },
+  {
+    id: "lgrey",
+    name: "Light Grey",
+    category: "T-shirt",
+    price: 100,
+    image: "/assets/nambeex-product-grey.webp",
   },
 ];
 
@@ -65,15 +72,15 @@ const TEMPLATE_LOOKBOOK_IMAGES = [
     alt: "Woman wearing colourful streetwear in front of a graffiti wall",
   },
   {
-    src: "/assets/weblium/template-lookbook-02.webp",
+    src: "/assets/weblium/template-lookbook-02.JPEG",
     alt: "Woman posing in a turquoise jacket and purple trousers",
   },
   {
-    src: "/assets/weblium/template-lookbook-03.webp",
+    src: "/assets/weblium/template-lookbook-03.JPG",
     alt: "Streetwear portrait against a purple background",
   },
   {
-    src: "/assets/weblium/template-lookbook-04.webp",
+    src: "/assets/weblium/template-lookbook-04.JPEG",
     alt: "Man wearing a turquoise and purple windbreaker",
   },
   {
@@ -81,7 +88,7 @@ const TEMPLATE_LOOKBOOK_IMAGES = [
     alt: "Woman wearing a yellow sportswear outfit",
   },
   {
-    src: "/assets/weblium/template-lookbook-06.webp",
+    src: "/assets/weblium/template-lookbook-06.JPEG",
     alt: "Woman wearing a colourful top in front of a painted wall",
   },
 ];
@@ -101,12 +108,19 @@ const TEMPLATE_WOMENS_IMAGES = [
   },
 ];
 
-function buyUrl(productId: string, platform: "shopee" | "tiktok") {
+/* function buyUrl(productId: string, platform: "shopee" | "tiktok") {
   const query = encodeURIComponent(productId);
 
   return platform === "shopee"
     ? `https://shopee.co.id/search?keyword=${query}`
     : `https://www.tiktok.com/search?q=${query}%20shop`;
+} */
+
+function buyUrl(productId: string, platform: "shopee" | "tiktok") {
+
+  return platform === "shopee"
+    ? `https://shopee.co.id/Nambeex-Unisex-T-Shirt-Quotes-i.239518448.51767596480?extraParams=%7B%22display_model_id%22%3A401489456356%2C%22model_selection_logic%22%3A3%7D`
+    : `https://www.tiktok.com/@nambeexofc`;
 }
 
 function Shell({ children, className = "" }: PropsWithChildren<{ className?: string }>) {
@@ -150,21 +164,21 @@ function LeafIcon() {
 
 const FEATURES: Feature[] = [
   {
-    number: "01",
-    title: "Fresh design",
-    text: "Graphic pieces inspired by the pulse, colour and movement of the city.",
+    number: "",
+    title: "Shiny and Unisex design",
+    text: "Streetwear with substance. Simple but powerful designed inspired by the pulse, colour and movement of the city.",
     icon: <SparkIcon />,
   },
   {
-    number: "02",
-    title: "Inclusive fits",
-    text: "Comfort-first silhouettes made to leave room for every personality.",
+    number: "",
+    title: "Stretchy for comfort.",
+    text: "Comfort-first silhouettes made for every shape.",
     icon: <SizeIcon />,
   },
   {
-    number: "03",
-    title: "Lighter impact",
-    text: "Thoughtful packaging and small drops that avoid unnecessary excess.",
+    number: "",
+    title: "Eco-friendly",
+    text: "Local manufacture. Made in Jawa.",
     icon: <LeafIcon />,
   },
 ];
@@ -177,11 +191,8 @@ function Header() {
   return (
     <header className="site-header">
       <Shell className="site-header__inner">
-        <a className="brand" href="#top" aria-label="Nambeex home" onClick={closeMenu}>
-          <span className="brand__mark" aria-hidden="true">
-            N
-          </span>
-          <span className="brand__name">Nambeex</span>
+        <a className="brand" href="https://shopee.co.id/nambeexofc" aria-label="Nambeex home" onClick={closeMenu}>
+          <img className="brand__mark__logo" src="/assets/design-nambeex.webp" alt="" />
         </a>
 
         <button
@@ -210,16 +221,16 @@ function Header() {
           <a href="#all-products" onClick={closeMenu}>
             Shop
           </a>
-          <a href="#press" onClick={closeMenu}>
+{/*           <a href="#press" onClick={closeMenu}>
             Press
-          </a>
+          </a> */}
           <a href="#contact" onClick={closeMenu}>
             Contact
           </a>
         </nav>
 
-        <a className="button button--cyan header-cta" href="#all-products">
-          Shop the drop
+        <a className="button template-button--outline header-cta" href="https://shopee.co.id/nambeexofc">
+          Visit the shop
         </a>
       </Shell>
     </header>
@@ -238,26 +249,26 @@ function Hero() {
           <div className="eyebrow eyebrow--light">
             <span /> Streetwear · Indonesia
           </div>
-          <p className="hero__kicker">A new urban uniform by Prince Sam</p>
+          <p className="hero__kicker">Streetwear made simple, comfort made essential.</p>
           <h1 className="hero__title">
-            Find your
-            <span>vibe.</span>
+            Wear your
+            <span>confidence</span>
           </h1>
           <p className="hero__intro">
-            Graphic streetwear made for people who would rather stand out than fit in.
+            Premium Cotton Combed.
+          </p>
+          <p className="hero__intro"> 
+            Made for the streets, built for everyday moves.
           </p>
           <div className="hero__actions">
             <a className="button button--cyan" href="#new-arrivals">
               Explore the drop <ArrowIcon />
             </a>
-            <a className="text-link" href="#about">
-              Our identity <ArrowIcon />
-            </a>
           </div>
         </div>
 
         <div className="hero__edition" aria-hidden="true">
-          <span>NM—01</span>
+          <span>2026</span>
           <span>Limited release</span>
         </div>
       </Shell>
@@ -281,12 +292,12 @@ function TemplateAbout() {
           <h2 className="template-title template-title--about">About us</h2>
           <p className="template-about__lead">Join the Nambeex brand. Live in style.</p>
           <p className="template-about__text">
-            A big city can make everyone look the same. Nambeex creates sportswear and
+            A big city can make everyone look the same. Nambeex creates
             streetwear that puts individuality first. Feel bright and free—never hide
             your own style.
           </p>
           <div className="template-about__actions">
-            <a className="button button--cyan" href="#story">
+            <a className="button template-button--outline" href="#story">
               Learn more <ArrowIcon />
             </a>
             <a className="button template-button--outline" href="#all-products">
@@ -326,13 +337,13 @@ function TemplateInvitation() {
     <section id="collection-invite" className="template-invitation">
       <Shell className="template-invitation__inner">
         <div className="template-invitation__copy">
-          <h2 className="template-title">be the first to shop the new collection</h2>
+          <h2 className="template-title">Designed by a prince, in the wonderful jogja city</h2>
           <p>
-            Send us a message and be the first to hear about the next Nambeex
+            Join our community to learn our story and be the first to hear about the next Nambeex
             collection.
           </p>
-          <a className="button button--dark" href="#contact">
-            Send a message <ArrowIcon />
+          <a className="button button--cyan" href="#contact">
+            Join <ArrowIcon />
           </a>
         </div>
       </Shell>
@@ -345,8 +356,8 @@ function TemplateWomensArrivals() {
     <section id="women-arrivals" className="template-womens">
       <Shell>
         <header className="template-heading template-heading--center">
-          <h2 className="template-title">NEW WOMENS ARRIVALS</h2>
-          <p>A first look at the colour and energy inspiring the next Nambeex drop.</p>
+          <h2 className="template-title">Check on our t-shirt collection</h2>
+          <p>Four colours available to match your daily energy.</p>
         </header>
 
         <div className="template-womens__grid">
@@ -370,34 +381,37 @@ function Story() {
       <Shell className="story__grid">
         <div className="story__copy">
           <div className="eyebrow">
-            <span /> 01 / Our identity
+            <span /> Our identity
           </div>
           <h2 className="display-title">
-            Built for
-            <br /> the street.
+            Made 
+            <br /> for all.
           </h2>
           <p className="story__lead">
             Nambeex turns local energy into confident, easy-to-wear pieces. Every drop is
             designed as a form of self-expression—not just another layer of fabric.
+            Distinct streetwear identity make every piece easy to wear, 
+            yet hard to ignore. Built for the city, made for your rhythm.
           </p>
           <p>
-            From graphic tees to everyday essentials, the collection mixes comfort,
-            character and an unmistakably urban point of view.
+            Crafted from premium Cotton Combed 24s, our tees offer a soft, 
+            breathable feel with enough structure to hold their shape throughout the day. 
+            Comfortable, durable and street-ready, 
+            they are made to move with you — from concrete streets to late-night city lights.
           </p>
-          <a className="button button--dark" href="#all-products">
-            Discover the collection <ArrowIcon />
-          </a>
         </div>
 
         <div className="story__visual">
           <div className="story__cyan-block" aria-hidden="true" />
-          <img src="/assets/nambeex-logo.jpeg" alt="Nambeex by Prince Sam logo" />
+          <img src="/assets/nambeex-logo.webp" alt="Nambeex by Prince Sam logo" />
+          <a className="story__button button button--dark" href="#all-products">
+            Discover the
+            <br /> collection <ArrowIcon />
+          </a>
           <div className="story__stamp" aria-hidden="true">
             <strong>100%</strong>
-            <span>Own your look</span>
+            <span>made in indonesia</span>
           </div>
-          <span className="story__glitch story__glitch--top" aria-hidden="true" />
-          <span className="story__glitch story__glitch--bottom" aria-hidden="true" />
         </div>
       </Shell>
     </section>
@@ -440,7 +454,7 @@ function NewArrivals() {
         <div className="section-heading section-heading--split">
           <div>
             <div className="eyebrow">
-              <span /> 02 / Latest release
+              <span /> Latest release
             </div>
             <h2 className="display-title">
               New
@@ -458,24 +472,24 @@ function NewArrivals() {
             <div className="drop-showcase__code" aria-hidden="true">
               DROP / 001
             </div>
-            <img src="/assets/nambeex-product.webp" alt="Nambeex Jogja graphic T-shirt" />
+            <img class="image-front" src="/assets/nambeex-product-black.webp" alt="Nambeex Jogja graphic T-shirt" />
+            <img class="image-back" src="/assets/nambeex-product-black-back.webp" alt="Nambeex Jogja graphic T-shirt Back" />
             <span className="drop-showcase__glitch drop-showcase__glitch--one" />
             <span className="drop-showcase__glitch drop-showcase__glitch--two" />
           </div>
 
           <div className="drop-showcase__copy">
             <span className="drop-showcase__label">New collection</span>
-            <h3>Jogja energy, wherever you go.</h3>
+            <h3>Jogja city energy, wherever you go.</h3>
             <p>
-              A bold city graphic on a clean black base. Easy to style, impossible to
-              ignore.
+              3D high quality rubber logo on the front with a well-wish sentence on the back to spread good vibes wherever you are.
             </p>
             <ul>
               <li>Soft cotton feel</li>
               <li>Unisex street fit</li>
-              <li>Limited graphic release</li>
+              <li>Powerful meaning</li>
             </ul>
-            <a className="button button--dark" href="#all-products">
+            <a className="button button--dark" href="https://shopee.co.id/Nambeex-Unisex-T-Shirt-Quotes-i.239518448.51767596480?extraParams=%7B%22display_model_id%22%3A401489456356%2C%22model_selection_logic%22%3A3%7D">
               Shop this drop <ArrowIcon />
             </a>
           </div>
@@ -489,7 +503,7 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
   return (
     <article className={`product-card product-card--${index + 1}`}>
       <div className="product-card__visual">
-        <span className="product-card__index">0{index + 1}</span>
+        {/* <span className="product-card__index">0{index + 1}</span> */}
         <span className="product-card__badge">Limited</span>
         <img src={product.image} alt={product.name} loading="lazy" />
       </div>
@@ -498,11 +512,11 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
           <span>{product.category}</span>
           <h3>{product.name}</h3>
         </div>
-        <strong>${product.price.toFixed(2)}</strong>
+        <strong>Rp {product.price}rb</strong>
       </div>
       <div className="product-card__actions">
         <a
-          className="button button--dark"
+          className="button button--cyan"
           href={product.shopeeUrl ?? buyUrl(product.id, "shopee")}
           target="_blank"
           rel="noreferrer noopener"
@@ -510,7 +524,7 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
         >
           Shopee <ArrowIcon />
         </a>
-        <a
+        {/* <a
           className="text-link text-link--dark"
           href={product.tiktokUrl ?? buyUrl(product.id, "tiktok")}
           target="_blank"
@@ -518,7 +532,7 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
           aria-label={`Buy ${product.name} on TikTok Shop`}
         >
           TikTok Shop <ArrowIcon />
-        </a>
+        </a> */}
       </div>
     </article>
   );
@@ -531,17 +545,13 @@ function AllProducts() {
         <div className="section-heading section-heading--split section-heading--light">
           <div>
             <div className="eyebrow eyebrow--light">
-              <span /> 03 / Shop Nambeex
+              <span /> Shop Nambeex
             </div>
             <h2 className="display-title">
               Pick your
-              <br /> statement.
+              <br /> colour.
             </h2>
           </div>
-          <p>
-            Start with the piece that matches your energy. Orders are completed through
-            our marketplace partners.
-          </p>
         </div>
 
         <div className="products__grid">
@@ -559,7 +569,7 @@ function Press() {
     <section id="press" className="section section--paper press">
       <Shell>
         <div className="eyebrow">
-          <span /> 04 / In the press
+          <span /> In the press
         </div>
         <div className="press__layout">
           <h2 className="display-title">People are talking.</h2>
@@ -577,14 +587,14 @@ function Press() {
     </section>
   );
 }
-
+/*
 function Contact() {
   return (
     <section id="contact" className="contact">
       <Shell className="contact__grid">
         <div>
           <div className="eyebrow">
-            <span /> 05 / Contact
+            <span /> Contact
           </div>
           <h2 className="display-title">
             Let's make
@@ -611,16 +621,52 @@ function Contact() {
     </section>
   );
 }
+*/
+function Contact() {
+  return (
+    <section id="contact" className="contact">
+      <Shell className="contact__grid">
+        <div className="contact__media" aria-hidden="true">
+          <img src="/assets/nambeex-contact.webp" alt="" />
+        </div>
+
+        <div className="contact__details">
+          <div className="eyebrow">
+            <span /> Contact
+          </div>
+          <h2 className="display-title">
+            Join the
+            <br /> community.
+          </h2>
+          <p>
+            Social media, product questions, collaborations, press or wholesale—choose the channel
+            that suits you best.
+          </p>
+          <a className="contact__email" href="mailto:hello@reallygreatsite.com">
+            nambeexofc@gmail.com <ArrowIcon />
+          </a>
+          <div className="contact__links">
+            {/* <a href="tel:+11234567890">(123) 456-7890</a> */}
+            <a href="https://www.instagram.com/nambeexofc/" target="_blank" rel="noreferrer noopener">
+              Instagram
+            </a>
+            <a href="https://www.tiktok.com/@nambeexofc" target="_blank" rel="noreferrer noopener">
+              TikTok
+            </a>
+            <a href="#top">Back to top ↑</a>
+          </div>
+        </div>
+      </Shell>
+    </section>
+  );
+}
 
 function Footer() {
   return (
     <footer className="footer">
       <Shell className="footer__inner">
         <a className="brand" href="#top" aria-label="Nambeex home">
-          <span className="brand__mark" aria-hidden="true">
-            N
-          </span>
-          <span className="brand__name">Nambeex</span>
+          <img className="brand__mark__logo" src="/assets/design-nambeex.webp" alt="" />
         </a>
         <p>Streetwear by Prince Sam.</p>
         <p>© {new Date().getFullYear()} Nambeex</p>
@@ -643,7 +689,7 @@ export default function App() {
         <Features />
         <NewArrivals />
         <AllProducts />
-        <Press />
+        {/* <Press /> */}
         <Contact />
       </main>
       <Footer />
