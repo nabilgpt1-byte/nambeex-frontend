@@ -23,7 +23,7 @@ const PRODUCTS: Product[] = [
     name: "Black",
     category: "T-shirt",
     price: 100,
-    image: "/assets/nambeex-product-black.webp",
+    image: "/assets/nambeex-product-black_small.webp",
   },
   {
     id: "white",
@@ -68,28 +68,36 @@ const PRESS = [
 
 const TEMPLATE_LOOKBOOK_IMAGES = [
   {
-    src: "/assets/weblium/template-lookbook-01.webp",
-    alt: "Woman wearing colourful streetwear in front of a graffiti wall",
+    src: "/assets/weblium/template-lookbook-08.webp",
+    alt: "Woman wearing a colourful top in front of a painted wall",
   },
   {
-    src: "/assets/weblium/template-lookbook-02.JPEG",
-    alt: "Woman posing in a turquoise jacket and purple trousers",
-  },
-  {
-    src: "/assets/weblium/template-lookbook-03.JPG",
-    alt: "Streetwear portrait against a purple background",
-  },
-  {
-    src: "/assets/weblium/template-lookbook-04.JPEG",
-    alt: "Man wearing a turquoise and purple windbreaker",
+    src: "/assets/weblium/template-lookbook-09.webp",
+    alt: "Woman wearing a colourful top in front of a painted wall",
   },
   {
     src: "/assets/weblium/template-lookbook-05.webp",
     alt: "Woman wearing a yellow sportswear outfit",
   },
   {
-    src: "/assets/weblium/template-lookbook-06.JPEG",
+    src: "/assets/weblium/template-lookbook-06.webp",
     alt: "Woman wearing a colourful top in front of a painted wall",
+  },
+  {
+    src: "/assets/weblium/template-lookbook-01.webp",
+    alt: "Woman wearing colourful streetwear in front of a graffiti wall",
+  },
+  {
+    src: "/assets/weblium/template-lookbook-02.webp",
+    alt: "Woman posing in a turquoise jacket and purple trousers",
+  },
+  {
+    src: "/assets/weblium/template-lookbook-03.webp",
+    alt: "Streetwear portrait against a purple background",
+  },
+  {
+    src: "/assets/weblium/template-lookbook-04.webp",
+    alt: "Man wearing a turquoise and purple windbreaker",
   },
 ];
 
@@ -162,6 +170,24 @@ function LeafIcon() {
   );
 }
 
+function ShopeeIcon() {
+  return (
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      <path
+        fill="currentColor"
+        d="M15.9414 17.9633c.229-1.879-.981-3.077-4.1758-4.0969-1.548-.528-2.277-1.22-2.26-2.1719.065-1.056 1.048-1.825 2.352-1.85a5.2898 5.2898 0 0 1 2.8838.89c.116.072.197.06.263-.039.09-.145.315-.494.39-.62.051-.081.061-.187-.068-.281-.185-.1369-.704-.4149-.983-.5319a6.4697 6.4697 0 0 0-2.5118-.514c-1.909.008-3.4129 1.215-3.5389 2.826-.082 1.1629.494 2.1078 1.73 2.8278.262.152 1.6799.716 2.2438.892 1.774.552 2.695 1.5419 2.478 2.6969-.197 1.047-1.299 1.7239-2.818 1.7439-1.2039-.046-2.2878-.537-3.1278-1.19l-.141-.11c-.104-.08-.218-.075-.287.03-.05.077-.376.547-.458.67-.077.108-.035.168.045.234.35.293.817.613 1.134.775a6.7097 6.7097 0 0 0 2.8289.727 4.9048 4.9048 0 0 0 2.0759-.354c1.095-.465 1.8029-1.394 1.9449-2.554zM11.9986 1.4009c-2.068 0-3.7539 1.95-3.8329 4.3899h7.6657c-.08-2.44-1.765-4.3899-3.8328-4.3899zm7.8516 22.5981-.08.001-15.7843-.002c-1.074-.04-1.863-.91-1.971-1.991l-.01-.195L1.298 6.2858a.459.459 0 0 1 .45-.494h4.9748C6.8448 2.568 9.1607 0 11.9996 0c2.8388 0 5.1537 2.5689 5.2757 5.7898h4.9678a.459.459 0 0 1 .458.483l-.773 15.5883-.007.131c-.094 1.094-.979 1.9769-2.0709 2.0059z"
+      />
+    </svg>
+  );
+}
+
 const FEATURES: Feature[] = [
   {
     number: "",
@@ -171,7 +197,7 @@ const FEATURES: Feature[] = [
   },
   {
     number: "",
-    title: "Stretchy for comfort.",
+    title: "Stretchy for comfort",
     text: "Comfort-first silhouettes made for every shape.",
     icon: <SizeIcon />,
   },
@@ -192,7 +218,7 @@ function Header() {
     <header className="site-header">
       <Shell className="site-header__inner">
         <a className="brand" href="https://shopee.co.id/nambeexofc" aria-label="Nambeex home" onClick={closeMenu}>
-          <img className="brand__mark__logo" src="/assets/design-nambeex.webp" alt="" />
+          <img className="brand__mark__logo " src="/assets/design-nambeex.webp" alt="" />
         </a>
 
         <button
@@ -229,8 +255,8 @@ function Header() {
           </a>
         </nav>
 
-        <a className="button template-button--outline header-cta" href="https://shopee.co.id/nambeexofc">
-          Visit the shop
+        <a className="button template-button--outline transparent-button header-cta" href="https://shopee.co.id/nambeexofc">
+          Visit the shop <ShopeeIcon />
         </a>
       </Shell>
     </header>
@@ -256,8 +282,6 @@ function Hero() {
           </h1>
           <p className="hero__intro">
             Premium Cotton Combed.
-          </p>
-          <p className="hero__intro"> 
             Made for the streets, built for everyday moves.
           </p>
           <div className="hero__actions">
@@ -316,7 +340,7 @@ function TemplateLookbook() {
       <Shell>
         <header className="template-heading template-heading--center">
           <h2 className="template-title">
-            have a short look at the <span>NEW COLLECTION</span>
+           Peep the <span>drip !</span>
           </h2>
         </header>
 
@@ -356,7 +380,7 @@ function TemplateWomensArrivals() {
     <section id="women-arrivals" className="template-womens">
       <Shell>
         <header className="template-heading template-heading--center">
-          <h2 className="template-title">Check on our t-shirt collection</h2>
+          <h2 className="template-title">Check on our new t-shirt collection</h2>
           <p>Four colours available to match your daily energy.</p>
         </header>
 
@@ -385,7 +409,7 @@ function Story() {
           </div>
           <h2 className="display-title">
             Made 
-            <br /> for all.
+            <br /> for all
           </h2>
           <p className="story__lead">
             Nambeex turns local energy into confident, easy-to-wear pieces. Every drop is
@@ -426,7 +450,7 @@ function Features() {
           <div className="eyebrow eyebrow--light">
             <span /> Why Nambeex
           </div>
-          <h2 className="display-title">More than clothes.</h2>
+          <h2 className="display-title">More than clothes</h2>
           <p>Three principles shape every Nambeex release.</p>
         </div>
 
@@ -458,7 +482,7 @@ function NewArrivals() {
             </div>
             <h2 className="display-title">
               New
-              <br /> arrivals.
+              <br /> arrivals
             </h2>
           </div>
           <p>
@@ -470,7 +494,7 @@ function NewArrivals() {
         <div className="drop-showcase">
           <div className="drop-showcase__visual">
             <div className="drop-showcase__code" aria-hidden="true">
-              DROP / 001
+              DROP
             </div>
             <img class="image-front" src="/assets/nambeex-product-black.webp" alt="Nambeex Jogja graphic T-shirt" />
             <img class="image-back" src="/assets/nambeex-product-black-back.webp" alt="Nambeex Jogja graphic T-shirt Back" />
@@ -480,7 +504,7 @@ function NewArrivals() {
 
           <div className="drop-showcase__copy">
             <span className="drop-showcase__label">New collection</span>
-            <h3>Jogja city energy, wherever you go.</h3>
+            <h3>Jogja city energy, wherever you go</h3>
             <p>
               3D high quality rubber logo on the front with a well-wish sentence on the back to spread good vibes wherever you are.
             </p>
@@ -490,7 +514,7 @@ function NewArrivals() {
               <li>Powerful meaning</li>
             </ul>
             <a className="button button--dark" href="https://shopee.co.id/Nambeex-Unisex-T-Shirt-Quotes-i.239518448.51767596480?extraParams=%7B%22display_model_id%22%3A401489456356%2C%22model_selection_logic%22%3A3%7D">
-              Shop this drop <ArrowIcon />
+              Shop this drop <ShopeeIcon />
             </a>
           </div>
         </div>
@@ -522,7 +546,7 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
           rel="noreferrer noopener"
           aria-label={`Buy ${product.name} on Shopee Indonesia`}
         >
-          Shopee <ArrowIcon />
+          Shopee <ShopeeIcon />
         </a>
         {/* <a
           className="text-link text-link--dark"
@@ -549,7 +573,7 @@ function AllProducts() {
             </div>
             <h2 className="display-title">
               Pick your
-              <br /> colour.
+              <br /> colour
             </h2>
           </div>
         </div>
@@ -635,8 +659,8 @@ function Contact() {
             <span /> Contact
           </div>
           <h2 className="display-title">
-            Join the
-            <br /> community.
+            Join our
+            <br /> community
           </h2>
           <p>
             Social media, product questions, collaborations, press or wholesale—choose the channel
